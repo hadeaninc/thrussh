@@ -2,7 +2,7 @@
 name = "thrussh"
 description = "A client and server SSH library."
 keywords = ["ssh"]
-version = "0.20.5"
+version = "0.20.6-hadean"
 authors = ["Pierre-Étienne Meunier <pe@pijul.org>"]
 repository = "https://nest.pijul.com/pijul_org/thrussh"
 homepage = "https://pijul.org/thrussh"
