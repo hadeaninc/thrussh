@@ -258,7 +258,7 @@ impl Session {
                     enc.write.push_u32_be(pix_height);
 
                     enc.write.push_u32_be(
-                        (5 * (1 + terminal_modes.len())) as u32,
+                        (1 + (5 * terminal_modes.len())) as u32,
                     );
                     for &(code, value) in terminal_modes {
                         enc.write.push(code as u8);
@@ -266,7 +266,6 @@ impl Session {
                     }
                     // 0 code (to terminate the list)
                     enc.write.push(0);
-                    enc.write.push_u32_be(0);
                 });
             }
         }
