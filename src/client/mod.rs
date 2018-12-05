@@ -14,6 +14,7 @@
 //
 
 use std::sync::Arc;
+use std::time::Duration;
 use std;
 use futures::{Poll, Async};
 use futures::future::Future;
@@ -66,6 +67,8 @@ pub struct Config {
     pub preferred: negotiation::Preferred,
     /// Time after which the connection is garbage-collected.
     pub connection_timeout: Option<std::time::Duration>,
+    /// Duration between keepalive messages
+    pub keepalive: Option<Duration>,
 }
 
 impl Default for Config {
@@ -81,6 +84,7 @@ impl Default for Config {
             maximum_packet_size: 200000,
             preferred: Default::default(),
             connection_timeout: None,
+            keepalive: None,
         }
     }
 }
@@ -303,7 +307,8 @@ impl<H: Handler, I, E, X: Future<Item = I, Error = E>, F: FnOnce(Connection<TcpS
             match self.state.take() {
                 Some(ConnectFutureState::TcpConnect(mut connect)) => {
                     if let Async::Ready(socket) = connect.poll()? {
-
+                        let keepalive = self.config.keepalive;
+                        socket.set_keepalive(keepalive)?;
                         self.state = Some(ConnectFutureState::Connect(
                             (self.f.take().unwrap())(Connection::new(
                                 self.config.clone(),
